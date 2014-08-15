@@ -1,4 +1,4 @@
-django-notifications
-====================
+django-alerts
+=============
 
-Django notifications
+Django alerts
