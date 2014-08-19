@@ -5,7 +5,7 @@ from utils import get_message_handler
 
 
 class AlertAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'level', 'tag', 'recipient', 'subject', 'is_read', 'is_email_sent', 'is_pushed', 'created')
+    list_display = ('pk', 'level', 'tag_display', 'recipient', 'subject', 'is_read', 'is_email_sent', 'is_pushed', 'created')
     list_filter = ('level', 'tag')
 
     def formfield_for_choice_field(self, db_field, request, **kwargs):
@@ -16,5 +16,12 @@ class AlertAdmin(admin.ModelAdmin):
     def tag_choices(self):
         message_handler = get_message_handler()
         return getattr(message_handler, 'TAGS', None)
+
+    def tag_display(self, alert):
+        choices = self.tag_choices()
+        choice = dict(choices).get(alert.tag, None)
+        if choice is not None:
+            return choice
+        return alert.tag
 
 admin.site.register(Alert, AlertAdmin)
