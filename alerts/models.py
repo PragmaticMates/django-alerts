@@ -1,12 +1,16 @@
 from django.conf import settings
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from managers import AlertManager
-from utils import get_callable
+from utils import get_message_handler
+
+
+def alert_settings(attribute):
+    message_handler = get_message_handler()
+    return getattr(message_handler, attribute, None)
 
 
 class Alert(models.Model):
@@ -21,7 +25,7 @@ class Alert(models.Model):
         (LEVEL_ERROR, _('error'))
     )
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_(u'recipient'), related_name='alerts')
-    tag = models.CharField(verbose_name=_(u'tag'), max_length=128, choices=getattr(settings, 'ALERTS_TAGS', None))
+    tag = models.CharField(verbose_name=_(u'tag'), max_length=128)
     level = models.CharField(verbose_name=_(u'level'), max_length=16, choices=LEVELS, default=LEVEL_INFO)
     subject = GenericForeignKey('subject_type', 'subject_id')
     subject_id = models.PositiveIntegerField()
@@ -44,10 +48,8 @@ class Alert(models.Model):
 
     @property
     def message(self):
-        message_handler = getattr(settings, 'ALERTS_MESSAGE_HANDLER', None)
-        if message_handler is None:
-            raise ImproperlyConfigured('ALERTS_MESSAGE_HANDLER is not set')
-        return unicode(get_callable(message_handler)(self))
+        message_handler = message_handler = get_message_handler()
+        return message_handler.get_message(self)
 
     def mark_as_read(self):
         if not self.is_read:

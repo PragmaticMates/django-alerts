@@ -1,3 +1,7 @@
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+
+
 def get_callable(kls):
     """
     Converts a string to a callable object.
@@ -9,3 +13,10 @@ def get_callable(kls):
     for comp in parts[1:]:
         m = getattr(m, comp)
     return m
+
+
+def get_message_handler():
+    message_handler = getattr(settings, 'ALERTS_MESSAGE_HANDLER', None)
+    if message_handler is None:
+        raise ImproperlyConfigured('ALERTS_MESSAGE_HANDLER is not set')
+    return get_callable(message_handler)()
