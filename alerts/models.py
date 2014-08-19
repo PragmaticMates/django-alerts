@@ -8,11 +8,6 @@ from managers import AlertManager
 from utils import get_message_handler
 
 
-def alert_settings(attribute):
-    message_handler = get_message_handler()
-    return getattr(message_handler, attribute, None)
-
-
 class Alert(models.Model):
     LEVEL_INFO = 'INFO'
     LEVEL_SUCCESS = 'SUCCESS'
@@ -25,7 +20,7 @@ class Alert(models.Model):
         (LEVEL_ERROR, _('error'))
     )
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_(u'recipient'), related_name='alerts')
-    tag = models.CharField(verbose_name=_(u'tag'), max_length=128)
+    tag = models.CharField(verbose_name=_(u'tag'), max_length=128, choices=[(None, None)])
     level = models.CharField(verbose_name=_(u'level'), max_length=16, choices=LEVELS, default=LEVEL_INFO)
     subject = GenericForeignKey('subject_type', 'subject_id')
     subject_id = models.PositiveIntegerField()
@@ -48,8 +43,7 @@ class Alert(models.Model):
 
     @property
     def message(self):
-        message_handler = message_handler = get_message_handler()
-        return message_handler.get_message(self)
+        return get_message_handler().get_message(self)
 
     def mark_as_read(self):
         if not self.is_read:
