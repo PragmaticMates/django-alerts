@@ -7,7 +7,7 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def alerts(context, tag, subject=None):
+def alerts(context, tags, subject=None):
     """
     Retrieves number of unread alerts by ``tag`` for current user from request.
     Notifications could be specified by optional argument ``subject`` as well,
@@ -24,7 +24,8 @@ def alerts(context, tag, subject=None):
 
     user = context['request'].user
 
-    alerts = Alert.objects.unread().for_recipient(user).by_tag(tag)
+    tags = tags.split('|')
+    alerts = Alert.objects.unread().for_recipient(user).by_tags(tags)
     if subject:
         alerts = alerts.of_subject(subject)
     number = alerts.count()

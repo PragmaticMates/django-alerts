@@ -1,5 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models import Q
 from django.db.models.query import QuerySet
 
 
@@ -9,6 +10,12 @@ class AlertQuerySet(QuerySet):
 
     def by_tag(self, tag):
         return self.filter(tag=tag)
+
+    def by_tags(self, tags):
+        search_q = Q()
+        for tag in tags:
+            search_q |= Q(**{'tag__exact': tag})
+        return self.filter(search_q)
 
     def of_subject(self, subject):
         return self.filter(subject_type=ContentType.objects.get_for_model(subject), subject_id=subject.pk)

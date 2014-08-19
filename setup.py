@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='django-alerts',
-    version='0.1.1',
+    version='0.2.0',
     description='Django alerts',
     long_description=open('README.rst').read(),
     author='Pragmatic Mates',
