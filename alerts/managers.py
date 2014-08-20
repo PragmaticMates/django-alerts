@@ -58,38 +58,42 @@ class AlertQuerySet(QuerySet):
 
 
 class AlertManager(models.Manager):
+    # TODO: deprecated
     def get_query_set(self):
+        return self.get_queryset()
+
+    def get_queryset(self):
         return AlertQuerySet(self.model, using=self._db)
 
     def for_recipient(self, user):
-        return self.get_query_set().for_recipient(user)
+        return self.get_queryset().for_recipient(user)
 
     def by_tag(self, tag):
-        return self.get_query_set().by_tag(tag)
+        return self.get_queryset().by_tag(tag)
 
     def of_subject(self, subject):
-        return self.get_query_set().of_subject(subject)
+        return self.get_queryset().of_subject(subject)
 
     def read(self):
-        return self.get_query_set().read()
+        return self.get_queryset().read()
 
     def unread(self):
-        return self.get_query_set().unread()
+        return self.get_queryset().unread()
     
     def pushed(self):
-        return self.get_query_set().pushed()
+        return self.get_queryset().pushed()
     
     def not_pushed(self):
-        return self.get_query_set().not_pushed()
+        return self.get_queryset().not_pushed()
     
     def email_sent(self):
-        return self.get_query_set().email_sent()
+        return self.get_queryset().email_sent()
     
     def not_email_sent(self):
-        return self.get_query_set().not_email_sent()
+        return self.get_queryset().not_email_sent()
 
     def mark_as_read(self, recipient):
-        return self.get_query_set().mark_as_read(recipient)
+        return self.get_queryset().mark_as_read(recipient)
 
     def mark_as_unread(self, recipient):
-        return self.get_query_set().mark_as_unread(recipient)
+        return self.get_queryset().mark_as_unread(recipient)
