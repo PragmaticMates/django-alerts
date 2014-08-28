@@ -1,10 +1,12 @@
 from django.contrib import admin
 
+from forms import AlertForm
 from models import Alert
 from utils import get_message_handler
 
 
 class AlertAdmin(admin.ModelAdmin):
+    form = AlertForm
     list_display = ('pk', 'level', 'tag_display', 'recipient', 'subject', 'is_read', 'is_email_sent', 'is_pushed', 'created')
     list_filter = ('level', 'tag')
 
