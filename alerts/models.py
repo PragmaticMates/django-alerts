@@ -4,6 +4,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from jsonfield import JSONField
+
 from managers import AlertManager
 from utils import get_message_handler
 
@@ -25,6 +27,8 @@ class Alert(models.Model):
     subject = GenericForeignKey('subject_type', 'subject_id')
     subject_id = models.PositiveIntegerField()
     subject_type = models.ForeignKey(ContentType, related_name='alert_subject')
+    context = JSONField(_(u'context'),
+        blank=True, null=True, default=None)
     is_read = models.BooleanField(_(u'read'), default=False)
     is_email_sent = models.BooleanField(_(u'email sent'), default=False)
     is_pushed = models.BooleanField(_(u'pushed'), default=False)

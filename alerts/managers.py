@@ -17,6 +17,22 @@ class AlertQuerySet(QuerySet):
             search_q |= Q(**{'tag__exact': tag})
         return self.filter(search_q)
 
+    def by_context_attribute(self, context_attribute, context_value):
+        pair = '"%(context_attribute)s":%(context_value)s' % {
+            'context_attribute': context_attribute,
+            'context_value': context_value
+        }
+        return self.filter(
+            Q(context__contains='%s,' % pair) |
+            Q(context__contains='%s}' % pair)
+        )
+
+    def in_context(self, context):
+        qs = self
+        for attribute, value in context.iteritems():
+            qs = qs.by_context_attribute(attribute, value)
+        return qs
+
     def of_subject(self, subject):
         return self.filter(subject_type=ContentType.objects.get_for_model(subject), subject_id=subject.pk)
 
@@ -70,6 +86,12 @@ class AlertManager(models.Manager):
 
     def by_tag(self, tag):
         return self.get_queryset().by_tag(tag)
+
+    def by_tags(self, tags):
+        return self.get_queryset().by_tags(tags)
+
+    def in_context(self, context):
+        return self.get_queryset().in_context(context)
 
     def of_subject(self, subject):
         return self.get_queryset().of_subject(subject)

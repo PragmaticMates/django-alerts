@@ -12,8 +12,13 @@ def notify(recipient, tag, subject=None, level=None):
     return Alert.objects.create(**kwargs)
 
 
-def mark_as_read(tag, user):
-    Alert.objects.by_tag(tag).mark_as_read(user)
+def mark_as_read(tag, user, subject=None, context=None):
+    alerts = Alert.objects.by_tag(tag)
+    if subject:
+        alerts = alerts.of_subject(subject)
+    if context:
+        alerts = alerts.in_context(context)
+    alerts.mark_as_read(user)
 
 
 class AlertMessageHandler(object):
