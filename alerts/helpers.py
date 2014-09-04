@@ -1,11 +1,12 @@
 from models import Alert
 
 
-def notify(recipient, tag, subject=None, level=None):
+def notify(recipient, tag, subject=None, context=None, level=None):
     kwargs = {
         'recipient': recipient,
         'tag': tag,
-        'subject': subject
+        'subject': subject,
+        'context': context
     }
     if level is not None:
         kwargs['level'] = level

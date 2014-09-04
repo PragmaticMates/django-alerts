@@ -53,7 +53,7 @@ def alerts(context, tags, *args, **kwargs):
         alerts = alerts.in_context(context)
 
     number = alerts.count()
-    
+
     if number > 0:
         return mark_safe('<span class="badge badge-notification">%d</span>' % number)
     return ''
